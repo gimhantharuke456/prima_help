@@ -156,11 +156,25 @@ const AddInventoryEntry = ({ open, handleOpenClose, getProducts }) => {
                   </Field>
                   {errors.date && touched.date && <div>{errors.date}</div>}
                 </Grid>
+
+                <Grid item xs={6}>
+                  <Button type="submit" variant="contained" color="primary">
+                    Add Entry
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    onClick={() => {
+                      handleOpenClose();
+                    }}
+                    variant="outlined"
+                    color="primary"
+                  >
+                    Close
+                  </Button>
+                </Grid>
               </Grid>
               <div style={{ height: 8 }} />
-              <Button type="submit" variant="contained" color="primary">
-                Add Entry
-              </Button>
             </Form>
           )}
         </Formik>

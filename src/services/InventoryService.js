@@ -8,8 +8,10 @@ import {
   setDoc,
   query,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { useProductsContext } from "../store/product_store";
+import ProductService from "./ProductService";
 
 class InventoryService {
   constructor(db) {
@@ -23,7 +25,22 @@ class InventoryService {
         this.inventoryCollection,
         `${inventory.productId}-${inventory.date}`
       );
-      await setDoc(docRef, inventory);
+
+      const snap = await getDoc(docRef);
+
+      if (snap.data() !== undefined) {
+        await setDoc(docRef, {
+          ...inventory,
+          quantity: snap.data()["quantity"] + inventory.quantity,
+        });
+      } else {
+        await setDoc(docRef, inventory);
+      }
+      const pService = new ProductService(this.db);
+      await pService.updateProductQuantity(
+        inventory.productId,
+        inventory.quantity
+      );
     } catch (error) {
       throw error;
     }

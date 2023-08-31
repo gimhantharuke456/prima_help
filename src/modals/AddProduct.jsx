@@ -31,6 +31,7 @@ const AddProduct = ({ defaultValues, handleOpenClose, open }) => {
     loadingDispatch({
       type: "SET_LOADING",
     });
+    setErrorFun("");
     try {
       const data = {
         ...values,
@@ -55,6 +56,7 @@ const AddProduct = ({ defaultValues, handleOpenClose, open }) => {
 
   const updateProductFunc = async (data) => {
     try {
+      setErrorFun("");
       if (data.id) {
         delete data.id;
       }

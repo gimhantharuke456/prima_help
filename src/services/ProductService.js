@@ -6,6 +6,7 @@ import {
   doc,
   updateDoc,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 
 class ProductService {
@@ -51,6 +52,25 @@ class ProductService {
       await deleteDoc(productRef);
     } catch (error) {
       throw error;
+    }
+  }
+  async updateProductQuantity(productId, newQuantity) {
+    const productRef = doc(this.db, "products", productId);
+
+    try {
+      const productSnapshot = await getDoc(productRef);
+      if (productSnapshot.exists()) {
+        const currentQuantity = productSnapshot.data().instock_amount;
+        const updatedQuantity = currentQuantity - newQuantity;
+
+        await updateDoc(productRef, { instock_amount: updatedQuantity });
+
+        console.log("Product quantity updated successfully");
+      } else {
+        console.log("Product not found");
+      }
+    } catch (error) {
+      console.error("Error updating product quantity:", error);
     }
   }
 }
