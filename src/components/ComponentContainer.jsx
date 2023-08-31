@@ -10,13 +10,12 @@ import Dashboard from "../views/Dashboard";
 const ComponentContainer = () => {
   const { isAuthenticated } = useAuth();
   const { loadingState } = useLoading();
-  const { error } = useErrorContext();
+
   if (loadingState.isLoading == true) {
     return <Loading />;
   }
   return (
-    <div>
-      {error && <Alert severity="error">{error}</Alert>}
+    <div style={{ display: "flex", flexDirection: "column" }}>
       {isAuthenticated ? <Dashboard /> : <Login />}
     </div>
   );

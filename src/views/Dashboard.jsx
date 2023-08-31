@@ -22,12 +22,14 @@ import Home from "./Home";
 import Users from "./Users";
 import Products from "./Products";
 import Inventories from "./Inventories";
+import { Alert } from "@mui/material";
+import { useErrorContext } from "../store/error_store";
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState(
     Number(localStorage.getItem("actinve_index")) ?? 0
   );
-
+  const { error } = useErrorContext();
   const activeIndexHandler = (index) => {
     localStorage.setItem("actinve_index", index);
     setActiveIndex(Number(localStorage.getItem("actinve_index")));
@@ -48,6 +50,7 @@ const Dashboard = () => {
     <Router>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
+
         <AppBar
           position="fixed"
           sx={{
@@ -133,17 +136,20 @@ const Dashboard = () => {
             </Link>
           </List>
         </Drawer>
+
         <Box
           component="main"
           sx={{
             width: "100%",
             padding: "16px",
+            paddingTop: 12,
           }}
         >
+          {error && <Alert severity="error">{error}</Alert>}
           <div
             style={{
               width: "100%",
-              height: `calc(100vh - 100px)`,
+              height: `calc(100vh - 200px)`,
             }}
           >
             <Routes>

@@ -10,6 +10,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { dateFormatter } from "../services/date_formatter";
 import InventoryService from "../services/InventoryService";
 import { db } from "../firebaseConfig";
+import { useErrorContext } from "../store/error_store";
+
 const validationSchema = yup.object().shape({
   productId: yup.string().required("Product is required"),
   quantity: yup
@@ -17,7 +19,6 @@ const validationSchema = yup.object().shape({
     .required("Quantity is required")
     .min(1, "Quantity must be at least 1"),
   date: yup.date().required("Date is required"),
-  // Add more validation rules here
 });
 
 const AddInventoryEntry = ({ open, handleOpenClose, getProducts }) => {
@@ -25,14 +26,22 @@ const AddInventoryEntry = ({ open, handleOpenClose, getProducts }) => {
   const { inventoryState, inventoryDispatch } = useInventoryContext();
   const { productState } = useProductsContext();
   const [selectedProductStock, setSelectedProductStock] = useState(0);
-  const [initialValues, setInitialValues] = useState({
+  const [selectedProductStockConst, setSelectedProductStockConst] = useState(0);
+  const { setErrorFun } = useErrorContext();
+  const initialValues = {
     productId: "",
     quantity: selectedProductStock,
     date: new Date(),
-  });
+  };
 
   const createInventoryEntry = async (values) => {
     try {
+      if (values.quantity > selectedProductStockConst) {
+        setErrorFun("Selected Product is out of stock");
+        handleOpenClose();
+        return;
+      }
+      setErrorFun("");
       const product = productState.products.find((p) => {
         return p.id === values.productId;
       });
@@ -73,7 +82,7 @@ const AddInventoryEntry = ({ open, handleOpenClose, getProducts }) => {
           validationSchema={validationSchema}
           onSubmit={createInventoryEntry}
         >
-          {({ errors, touched }) => (
+          {({ errors, touched, setFieldValue }) => (
             <Form>
               <Grid container spacing={2}>
                 <Grid item xs={4}>
@@ -83,6 +92,18 @@ const AddInventoryEntry = ({ open, handleOpenClose, getProducts }) => {
                     label="Product"
                     fullWidth
                     select
+                    onChange={(event) => {
+                      const productId = event.target.value;
+                      const product = productState.products.find(
+                        (p) => p.id === productId
+                      );
+                      if (product) {
+                        setSelectedProductStock(product.instock_amount);
+                        setSelectedProductStockConst(product.instock_amount);
+                        setFieldValue("quantity", product.instock_amount);
+                      }
+                      setFieldValue("productId", productId);
+                    }}
                   >
                     <MenuItem value="" disabled>
                       Select a product
