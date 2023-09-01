@@ -123,7 +123,7 @@ const Dashboard = () => {
                 <ListItemText primary="Inventories" />
               </ListItem>
             </Link>
-            <Link
+            {/* <Link
               to="/admins"
               onClick={() => {
                 activeIndexHandler(3);
@@ -135,7 +135,7 @@ const Dashboard = () => {
                 </ListItemIcon>
                 <ListItemText primary="Admins" />
               </ListItem>
-            </Link>
+            </Link> */}
           </List>
         </Drawer>
 
@@ -158,7 +158,7 @@ const Dashboard = () => {
               <Route path="/" element={<Home />} />
               <Route path="/products" element={<Products />} />
               <Route path="/invetories" element={<Inventories />} />
-              <Route path="/admins" element={<Users />} />
+              {/* <Route path="/admins" element={<Users />} /> */}
               <Route
                 path="/pdf-products"
                 element={
