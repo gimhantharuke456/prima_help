@@ -1,5 +1,5 @@
-import { Container, Pagination } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Container, Pagination, TextField } from "@mui/material";
 import { useProductsContext } from "../store/product_store";
 import { useLoading } from "../store/loading_store";
 import BodyTitles from "../components/BodyTitles";
@@ -28,6 +28,7 @@ const Products = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [searchText, setSearchText] = useState(""); // State for search text
   //helpers
   const handleAddProductModal = () => {
     setIsAddProductModalOpen(!isAddProductModalOpen);
@@ -64,6 +65,20 @@ const Products = () => {
   const handleViewProductModal = () => {
     setViewModalOpen(!viewModalOpen);
   };
+
+  const handleSearchChange = (event) => {
+    setSearchText(event.target.value);
+  };
+
+  const products = () => {
+    if (searchText.length !== 0) {
+      return productState.products.filter((product) =>
+        product.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    return productState.products;
+  };
+
   useEffect(() => {
     loadingDispatch({
       type: "SET_LOADING",
@@ -85,6 +100,7 @@ const Products = () => {
       type: "SET_NOT_LOADING",
     });
   }, []);
+
   return (
     <Container className="nav-bar-container">
       <BodyTitles
@@ -97,9 +113,25 @@ const Products = () => {
           navigate("/pdf-products");
         }}
       />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          margin: "16px 0",
+        }}
+      >
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchText}
+          onChange={handleSearchChange}
+        />
+      </div>
       <div className="body-body">
         <CommonTable
-          data={productState.products}
+          data={products()}
           headers={["name", "instock_amount"]}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
@@ -114,7 +146,7 @@ const Products = () => {
         />
 
         <Pagination
-          count={Math.ceil(productState.products.length / itemsPerPage)}
+          count={Math.ceil(products().length / itemsPerPage)}
           page={currentPage}
           onChange={(event, newPage) => onPageChange(newPage)}
         />
