@@ -26,6 +26,7 @@ import { Alert } from "@mui/material";
 import { useErrorContext } from "../store/error_store";
 import PDFGenerator from "../components/ProductGenerater";
 import { useProductsContext } from "../store/product_store";
+import { LogoutOutlined } from "@mui/icons-material";
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState(
@@ -48,6 +49,11 @@ const Dashboard = () => {
     return {};
   };
 
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.replace("/");
+  };
+
   return (
     <Router>
       <Box sx={{ display: "flex" }}>
@@ -59,10 +65,19 @@ const Dashboard = () => {
             zIndex: (theme) => theme.zIndex.drawer + 1,
           }}
         >
-          <Toolbar>
+          <Toolbar
+            sx={{
+              display: "flex",
+              width: "100%",
+              justifyContent: "space-between",
+            }}
+          >
             <Typography variant="h6" noWrap component="div">
               Dashboard
             </Typography>
+            <IconButton color="inherit" onClick={handleLogout}>
+              <LogoutOutlined />
+            </IconButton>
           </Toolbar>
         </AppBar>
         <Drawer
