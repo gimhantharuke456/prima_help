@@ -24,6 +24,8 @@ import Products from "./Products";
 import Inventories from "./Inventories";
 import { Alert } from "@mui/material";
 import { useErrorContext } from "../store/error_store";
+import PDFGenerator from "../components/ProductGenerater";
+import { useProductsContext } from "../store/product_store";
 
 const Dashboard = () => {
   const [activeIndex, setActiveIndex] = useState(
@@ -34,7 +36,7 @@ const Dashboard = () => {
     localStorage.setItem("actinve_index", index);
     setActiveIndex(Number(localStorage.getItem("actinve_index")));
   };
-
+  const { productState } = useProductsContext();
   const stylesHandler = (index) => {
     if (activeIndex === index) {
       return {
@@ -157,6 +159,16 @@ const Dashboard = () => {
               <Route path="/products" element={<Products />} />
               <Route path="/invetories" element={<Inventories />} />
               <Route path="/admins" element={<Users />} />
+              <Route
+                path="/pdf-products"
+                element={
+                  <PDFGenerator
+                    products={productState.products}
+                    title={"Products"}
+                    date={new Date()}
+                  />
+                }
+              />
             </Routes>
           </div>
         </Box>

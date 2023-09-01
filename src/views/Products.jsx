@@ -12,9 +12,11 @@ import { useSelectedItemContext } from "../store/selected_item_store";
 import ViewProduct from "../modals/ViewProduct";
 import ProductService from "../services/ProductService";
 import { db } from "../firebaseConfig";
+import { useNavigate } from "react-router-dom";
 const Products = () => {
   const productsService = new ProductService(db);
   const itemsPerPage = 10;
+  const navigate = useNavigate();
   //contexts
   const { loadingDispatch } = useLoading();
   const { setErrorFun } = useErrorContext();
@@ -90,6 +92,9 @@ const Products = () => {
         onClick={() => {
           setSelectedItem(null);
           handleAddProductModal();
+        }}
+        onDownloadClicked={() => {
+          navigate("/pdf-products");
         }}
       />
       <div className="body-body">
