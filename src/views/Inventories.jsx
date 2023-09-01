@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Container, Pagination, Tab, Tabs, TextField } from "@mui/material";
+import {
+  Container,
+  Pagination,
+  Tab,
+  Tabs,
+  TextField,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { useLoading } from "../store/loading_store";
 import { useErrorContext } from "../store/error_store";
 import { useInventoryContext } from "../store/inventory_store";
@@ -32,7 +40,26 @@ const Inventories = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [tabs, setTabs] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState("week");
   // Event Handlers
+  const handleFilterChange = (event) => {
+    setSelectedFilter(event.target.value);
+  };
+  const filteredTabs = () => {
+    const today = new Date();
+    switch (selectedFilter) {
+      case "week":
+        return dateGenerator(7);
+      case "two-weeks":
+        return dateGenerator(14);
+      case "month":
+        return dateGenerator(30);
+      case "two-months":
+        return dateGenerator(60);
+      default:
+        return dateGenerator(7);
+    }
+  };
   const handleAddStockModal = () => {
     setAddStockModalOpen(!addStockModalOpen);
   };
@@ -112,7 +139,10 @@ const Inventories = () => {
     setTabs(dateGenerator(7));
     getProducts();
   }, []);
-
+  useEffect(() => {
+    setTabs(filteredTabs());
+    getProducts();
+  }, [selectedFilter]);
   return (
     <Container className="nav-bar-container">
       <BodyTitles
@@ -136,6 +166,18 @@ const Inventories = () => {
           value={searchText}
           onChange={handleSearchChange}
         />
+        <Select
+          value={selectedFilter}
+          onChange={handleFilterChange}
+          variant="outlined"
+          size="small"
+          style={{ marginLeft: "8px" }}
+        >
+          <MenuItem value="week">Week</MenuItem>
+          <MenuItem value="two-weeks">Two Weeks</MenuItem>
+          <MenuItem value="month">Month</MenuItem>
+          <MenuItem value="two-months">Two Months</MenuItem>
+        </Select>
       </div>
       <div className="body-body">
         <div
