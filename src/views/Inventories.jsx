@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Pagination, Tab, Tabs } from "@mui/material";
+import { Container, Pagination, Tab, Tabs, TextField } from "@mui/material";
 import { useLoading } from "../store/loading_store";
 import { useErrorContext } from "../store/error_store";
 import { useInventoryContext } from "../store/inventory_store";
@@ -31,6 +31,7 @@ const Inventories = () => {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState(0);
   const [tabs, setTabs] = useState([]);
+  const [searchText, setSearchText] = useState("");
   // Event Handlers
   const handleAddStockModal = () => {
     setAddStockModalOpen(!addStockModalOpen);
@@ -60,6 +61,9 @@ const Inventories = () => {
       },
     });
     setDeleteConfirmOpen(false);
+  };
+  const handleSearchChange = (event) => {
+    setSearchText(event.target.value);
   };
   const getProducts = async () => {
     loadingDispatch({
@@ -92,6 +96,18 @@ const Inventories = () => {
       type: "SET_NOT_LOADING",
     });
   };
+  const inventries = () => {
+    if (searchText.length != 0) {
+      return inventoryState.entries.filter(
+        (product) =>
+          product.date === tabs[selectedTab] &&
+          product.product.toLowerCase().includes(searchText.toLowerCase())
+      );
+    }
+    return inventoryState.entries.filter(
+      (product) => product.date === tabs[selectedTab]
+    );
+  };
   useEffect(() => {
     setTabs(dateGenerator(7));
     getProducts();
@@ -105,6 +121,22 @@ const Inventories = () => {
           handleAddStockModal();
         }}
       />
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          margin: "16px 0",
+        }}
+      >
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchText}
+          onChange={handleSearchChange}
+        />
+      </div>
       <div className="body-body">
         <div
           style={{
@@ -128,9 +160,7 @@ const Inventories = () => {
         </div>
 
         <CommonTable
-          data={inventoryState.entries.filter(
-            (product) => product.date === tabs[selectedTab]
-          )}
+          data={inventries()}
           headers={["product", "quantity"]}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
@@ -142,7 +172,7 @@ const Inventories = () => {
         />
 
         <Pagination
-          count={Math.ceil(inventoryState.entries.length / itemsPerPage)}
+          count={Math.ceil(inventries().length / itemsPerPage)}
           page={currentPage}
           onChange={(event, newPage) => onPageChange(newPage)}
         />
