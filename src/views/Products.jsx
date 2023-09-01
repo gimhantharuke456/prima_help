@@ -13,6 +13,7 @@ import ViewProduct from "../modals/ViewProduct";
 import ProductService from "../services/ProductService";
 import { db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import { useInventoryContext } from "../store/inventory_store";
 const Products = () => {
   const productsService = new ProductService(db);
   const itemsPerPage = 10;
@@ -22,6 +23,7 @@ const Products = () => {
   const { setErrorFun } = useErrorContext();
   const { productState, productDispatch } = useProductsContext();
   const { selectedItem, setSelectedItem } = useSelectedItemContext();
+  const { inventoryState, inventoryDispatch } = useInventoryContext();
   //use states
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -52,6 +54,14 @@ const Products = () => {
         type: "DELETE_PRODUCT",
         payload: {
           id: id,
+        },
+      });
+      inventoryDispatch({
+        type: "GET_ENTRIES",
+        payload: {
+          entries: inventoryState.entries.filter(
+            (entry) => entry.productId !== id
+          ),
         },
       });
     } catch (error) {

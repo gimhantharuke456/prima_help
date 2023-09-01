@@ -7,6 +7,8 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
+  query,
+  where,
 } from "firebase/firestore";
 
 class ProductService {
@@ -50,6 +52,15 @@ class ProductService {
     try {
       const productRef = doc(this.db, "products", productId);
       await deleteDoc(productRef);
+      const q = query(
+        collection(this.db, "inventory"),
+        where("productId", "==", productId)
+      );
+      const entries = await getDocs(q);
+      entries.forEach(async (entry) => {
+        const entryDoc = doc(this.db, "inventory", entry.id);
+        await deleteDoc(entryDoc);
+      });
     } catch (error) {
       throw error;
     }
