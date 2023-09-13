@@ -142,7 +142,7 @@ const Products = () => {
       <div className="body-body">
         <CommonTable
           data={products()}
-          headers={["name", "instock_amount"]}
+          headers={["name", "instock_amount", "last_stock_filled", "price"]}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
           primaryFieldName={"id"}

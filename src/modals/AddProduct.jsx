@@ -18,6 +18,7 @@ const AddProduct = ({ defaultValues, handleOpenClose, open }) => {
   const [initialValues, setInitialValues] = useState({
     name: "",
     instock_amount: 0,
+    price: 0,
   });
 
   const { setErrorFun } = useErrorContext();
@@ -80,7 +81,7 @@ const AddProduct = ({ defaultValues, handleOpenClose, open }) => {
   };
 
   useEffect(() => {
-    setInitialValues(defaultValues || initialValues);
+    setInitialValues({ ...defaultValues, instock_amount: 0 } || initialValues);
   }, [defaultValues]);
 
   return (
@@ -91,8 +92,15 @@ const AddProduct = ({ defaultValues, handleOpenClose, open }) => {
           validationSchema={validationSchema}
           onSubmit={(values) => {
             defaultValues
-              ? updateProductFunc({ ...values, price: Number(values.price) })
-              : createProduct(values);
+              ? updateProductFunc({
+                  ...values,
+                  price: Number(values.price),
+                  instock_amount:
+                    Number(values.instock_amount) +
+                    Number(defaultValues.instock_amount),
+                  last_stock_filled: values.instock_amount,
+                })
+              : createProduct({ ...values, price: Number(values.price) });
           }}
         >
           {({ errors, touched }) => (
@@ -108,22 +116,48 @@ const AddProduct = ({ defaultValues, handleOpenClose, open }) => {
                     helperText={touched.name && errors.name}
                   />
                 </Grid>
+                {!defaultValues && (
+                  <Grid item xs={6}>
+                    <Field
+                      as={TextField}
+                      name="instock_amount"
+                      label="Instock Amount"
+                      fullWidth
+                      error={
+                        touched.instock_amount && Boolean(errors.instock_amount)
+                      }
+                      helperText={
+                        touched.instock_amount && touched.instock_amount
+                      }
+                    />
+                  </Grid>
+                )}
+                {defaultValues && (
+                  <Grid item xs={6}>
+                    <Field
+                      as={TextField}
+                      name="instock_amount"
+                      label={`Amount adding to stock. Current stock is ${defaultValues.instock_amount}`}
+                      fullWidth
+                      error={
+                        touched.instock_amount && Boolean(errors.instock_amount)
+                      }
+                      helperText={
+                        touched.instock_amount && touched.instock_amount
+                      }
+                    />
+                  </Grid>
+                )}
                 <Grid item xs={6}>
                   <Field
                     as={TextField}
-                    name="instock_amount"
-                    label="Instock Amount"
+                    name="price"
+                    label="Price"
                     fullWidth
-                    error={
-                      touched.instock_amount && Boolean(errors.instock_amount)
-                    }
-                    helperText={
-                      touched.instock_amount && touched.instock_amount
-                    }
-                    // ... (other attributes)
+                    error={touched.price && Boolean(errors.price)}
+                    helperText={touched.price && touched.price}
                   />
                 </Grid>
-
                 <Grid item xs={12}>
                   <Button type="submit" variant="contained" color="primary">
                     {defaultValues ? "Edit" : "Add"}

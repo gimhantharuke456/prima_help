@@ -27,6 +27,13 @@ const Home = () => {
         borderWidth: 1,
       },
     ],
+    options: {
+      plugins: {
+        legend: {
+          display: false, // This will hide the legend (titles)
+        },
+      },
+    },
   });
   useEffect(() => {
     if (productState.products.length == 0) {
@@ -55,11 +62,18 @@ const Home = () => {
               {
                 label: "Products",
                 data: values,
-                backgroundColor: "rgba(75,192,192,0.4)",
+                backgroundColor: "rgba(75,192,192,0.8)",
                 borderColor: "rgba(75,192,192,1)",
                 borderWidth: 1,
               },
             ],
+            options: {
+              plugins: {
+                legend: {
+                  display: false,
+                },
+              },
+            },
           });
         })
         .catch((err) => {
@@ -151,7 +165,14 @@ const Home = () => {
               <Typography variant="h6" gutterBottom>
                 Product Stocks
               </Typography>
-              <Doughnut data={chartData} />
+              <Doughnut
+                data={chartData}
+                options={{
+                  plugins: {
+                    legend: false,
+                  },
+                }}
+              />
             </CardContent>
           </Card>
         </Grid>
